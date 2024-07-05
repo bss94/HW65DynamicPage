@@ -6,16 +6,19 @@ import axiosApi from '../../axiosApi.ts';
 import {enqueueSnackbar} from 'notistack';
 
 interface Props {
-  pages:Page[]
+  pages: Page[];
+  reloadNav: () => void;
 }
-const AdminForm:React.FC<Props> = ({pages}) => {
+
+const initialState = {
+  id: '',
+  title: '',
+  content: '',
+};
+const AdminForm: React.FC<Props> = ({pages, reloadNav}) => {
 
   const navigate = useNavigate();
-  const [page, setPage] = useState<Page>({
-    id: '',
-    title: '',
-    content: '',
-  });
+  const [page, setPage] = useState<Page>(initialState);
   const [isEdit, setIsEdit] = useState(true);
   const [isLoading, setIsLoading] = useState(false);
   const [isSending, setIsSending] = useState(false);
@@ -28,17 +31,14 @@ const AdminForm:React.FC<Props> = ({pages}) => {
       setPage(prevState => {
         return {...prevState, ...pageResponse};
       });
-    } 
+    }
     setIsLoading(false);
   }, [page.id]);
-
   useEffect(() => {
-    if(isEdit){
-      void fetchEditPage()
+    if (isEdit) {
+      void fetchEditPage();
     }
-  }, [isEdit,fetchEditPage]);
-
-
+  }, [isEdit, fetchEditPage]);
   const changeField = (
     event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>,
   ) => {
@@ -49,12 +49,16 @@ const AdminForm:React.FC<Props> = ({pages}) => {
     }));
   };
 
+  const changeFormMode = () => {
+    setIsEdit(!isEdit);
+    setPage(initialState);
+  };
   const onFormSubmit = async (event: React.FormEvent) => {
     setIsSending(true);
     event.preventDefault();
     const postData = {
-      title:page.title,
-      content:page.content
+      title: page.title,
+      content: page.content
     };
     try {
       if (isEdit) {
@@ -68,7 +72,8 @@ const AdminForm:React.FC<Props> = ({pages}) => {
     } finally {
       setIsSending(false);
     }
-      navigate(`/pages/${page.id}`);
+    void reloadNav();
+    navigate(`/pages/${page.id}`);
   };
   let submitBtn = (<>Save</>);
   if (isSending) {
@@ -95,8 +100,8 @@ const AdminForm:React.FC<Props> = ({pages}) => {
       onChange={changeField}
       required
     />
-  )
-  if(isEdit){
+  );
+  if (isEdit) {
     pageField = (
       <Form.Select
         name="id"
@@ -109,7 +114,7 @@ const AdminForm:React.FC<Props> = ({pages}) => {
           return <option value={el.id} key={Math.random() * 1000}>{el.title}</option>;
         })}
       </Form.Select>
-    )
+    );
   }
 
   return isLoading ?
@@ -121,15 +126,17 @@ const AdminForm:React.FC<Props> = ({pages}) => {
       <>
         <Col/>
         <Col sm={10}>
-          <div>
-            <Button className="text-center mt-4 btn-light btn-outline-primary" onClick={()=>setIsEdit(!isEdit)}>{!isEdit ? 'Edit mode' : 'Create mode'}</Button>
+          <div className="text-center">
+            <Button className=" mt-4 btn-light btn-outline-primary" onClick={changeFormMode}>
+              {!isEdit ? 'Edit mode' : 'Create mode'}
+            </Button>
           </div>
 
 
           <Form onSubmit={onFormSubmit} className="mt-3">
             <Form.Text muted><h1>{isEdit ? 'Edit page' : 'Create page'}</h1></Form.Text>
 
-            <Form.Group className="mb-3"
+            <Form.Group className="mt-3 mb-3"
                         controlId="title"
             >
               <Form.Label>Page</Form.Label>

@@ -2,15 +2,16 @@ import React, {useCallback, useEffect, useState} from 'react';
 import {ApiPage, Page} from '../../types.ts';
 import axiosApi from '../../axiosApi.ts';
 import {useParams} from 'react-router-dom';
+import {Spinner} from 'react-bootstrap';
 
 const DynamicPage = () => {
-  const [page, setPage] = useState<Page|null>(null);
-  const [isFetching,setIsFetching] = useState(false);
-  const {pageName:currentPage}=useParams();
+  const [page, setPage] = useState<Page | null>(null);
+  const [isFetching, setIsFetching] = useState(false);
+  const {pageName: currentPage} = useParams();
 
   const fetchPage = useCallback(async () => {
     setIsFetching(true);
-    if(currentPage!==undefined){
+    if (currentPage !== undefined) {
       const response = await axiosApi.get<ApiPage | null>(`/pages/${currentPage}.json`);
       const pageResponse = response.data;
       if (pageResponse !== null) {
@@ -18,7 +19,7 @@ const DynamicPage = () => {
       } else {
         setPage(null);
       }
-    }else {
+    } else {
       const response = await axiosApi.get<ApiPage | null>(`/pages/main.json`);
       const pageResponse = response.data;
       if (pageResponse !== null) {
@@ -30,16 +31,28 @@ const DynamicPage = () => {
     setIsFetching(false);
   }, [currentPage]);
 
-  useEffect(()=>{
+  useEffect(() => {
     void fetchPage();
-  },[fetchPage])
+  }, [fetchPage]);
 
-  return (
-    <div>
-      <h1>{page?.title}</h1>
-      <p>{page?.content}</p>
+  return isFetching ?
+    <div className="text-center mt-3">
+      <Spinner className="mt-3" animation="border" variant="primary"/>
     </div>
-  );
+    :
+    (
+      <div>{
+        page ? <>
+            <h1 className="p-2 mx-5 mt-3">{page.title}</h1>
+            <p className="p-3">{page.content}</p>
+          </>
+          :
+          <>
+            <h1>Error data not found</h1>
+          </>
+      }
+      </div>
+    );
 };
 
 export default DynamicPage;

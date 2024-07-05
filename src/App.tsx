@@ -9,7 +9,7 @@ import AdminForm from './containers/AdminForm/AdminForm.tsx';
 
 const App = () => {
   const [pages, setPages] = useState<Page[]>([]);
-  const [isFetching,setIsFetching] = useState(false)
+  const [isFetching, setIsFetching] = useState(false);
 
   const fetchPages = useCallback(async () => {
     setIsFetching(true);
@@ -29,14 +29,14 @@ const App = () => {
     setIsFetching(false);
   }, []);
 
-  useEffect(()=>{
+  useEffect(() => {
     void fetchPages();
-  },[fetchPages])
+  }, [fetchPages]);
 
-  return(
+  return (
     <>
       <header>
-        <Toolbar pages={pages} />
+        <Toolbar pages={pages} isFetching={isFetching}/>
       </header>
       <Container>
         <Row>
@@ -44,12 +44,12 @@ const App = () => {
             <Route path="/" element={<DynamicPage/>}>
             </Route>
             <Route path="/pages/:pageName" element={<DynamicPage/>}/>
-            <Route path="/pages/admin" element={<AdminForm pages={pages}/>}/>
+            <Route path="/pages/admin" element={<AdminForm pages={pages} reloadNav={fetchPages}/>}/>
             <Route path="*" element={<h1>not found</h1>}/>
           </Routes>
         </Row>
       </Container>
     </>
   );
-}
-export default App
+};
+export default App;
