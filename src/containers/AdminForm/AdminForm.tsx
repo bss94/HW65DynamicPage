@@ -119,7 +119,6 @@ const AdminForm: React.FC<Props> = ({pages, reloadNav}) => {
     );
   }
   const handleModelChange = (event) => {
-    console.log(event);
     setPage((prev) => ({
       ...prev,
       content: event,
