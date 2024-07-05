@@ -24,7 +24,6 @@ const AdminForm: React.FC<Props> = ({pages, reloadNav}) => {
   const navigate = useNavigate();
   const [page, setPage] = useState<Page>(initialState);
   const [isEdit, setIsEdit] = useState(true);
-  const [isFroala, setIsFroala] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [isSending, setIsSending] = useState(false);
 
@@ -67,10 +66,12 @@ const AdminForm: React.FC<Props> = ({pages, reloadNav}) => {
     try {
       if (isEdit) {
         await axiosApi.put(`/pages/${page.id}.json`, postData);
+        enqueueSnackbar('Edited', {variant: 'success'});
       } else {
         await axiosApi.post(`/pages.json`, postData);
+        enqueueSnackbar('Created', {variant: 'success'});
       }
-      enqueueSnackbar('Posted', {variant: 'success'});
+
     } catch (e) {
       enqueueSnackbar('Something Wrong', {variant: 'error'});
     } finally {
@@ -124,30 +125,7 @@ const AdminForm: React.FC<Props> = ({pages, reloadNav}) => {
       content: event,
     }));
   };
-  let contentField = (
-    <>
-      <Form.Label>Content</Form.Label>
-      <Form.Control
-        as="textarea"
-        rows={10}
-        name="content"
-        value={page.content}
-        onChange={changeField}
-        required
-      />
-    </>
-  );
-  if (isFroala) {
-    contentField = (
-      <>
-        <Form.Label>content on froala</Form.Label>
-        <FroalaEditorComponent
-          tag="textarea"
-          onModelChange={handleModelChange}
-          model={page.content}
-        /></>
-    );
-  }
+
   return isLoading ?
     <div className="text-center mt-3">
       <Spinner className="mt-3" animation="border" variant="primary"/>
@@ -158,7 +136,6 @@ const AdminForm: React.FC<Props> = ({pages, reloadNav}) => {
         <Col/>
         <Col sm={10}>
           <div className="text-end mt-4">
-            <Button onClick={() => setIsFroala(!isFroala)}>{isFroala ? 'use texreata' : 'use froala'}</Button>
             <Button className="mx-3  btn-light btn-outline-primary" onClick={changeFormMode}>
               {!isEdit ? 'Edit mode' : 'Create mode'}
             </Button>
@@ -187,7 +164,12 @@ const AdminForm: React.FC<Props> = ({pages, reloadNav}) => {
               className="mb-3"
               controlId="content"
             >
-              {contentField}
+              <Form.Label>content on froala</Form.Label>
+              <FroalaEditorComponent
+                tag="textarea"
+                onModelChange={handleModelChange}
+                model={page.content}
+              />
             </Form.Group>
             <div className="d-flex justify-content-end">
               <Button variant="primary"
