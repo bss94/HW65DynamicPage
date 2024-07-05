@@ -53,7 +53,6 @@ const AdminForm: React.FC<Props> = ({pages, reloadNav}) => {
       [name]: value,
     }));
   };
-
   const changeFormMode = () => {
     setIsEdit(!isEdit);
     setPage(initialState);
@@ -95,8 +94,6 @@ const AdminForm: React.FC<Props> = ({pages, reloadNav}) => {
       </>
     );
   }
-
-
   let pageField = (
     <Form.Control
       type="text"
@@ -121,39 +118,37 @@ const AdminForm: React.FC<Props> = ({pages, reloadNav}) => {
       </Form.Select>
     );
   }
-  const handleModelChange= (event)=>{
-    console.log(event)
+  const handleModelChange = (event) => {
+    console.log(event);
     setPage((prev) => ({
       ...prev,
       content: event,
     }));
-  }
-
+  };
   let contentField = (
     <>
-    <Form.Label>Content</Form.Label>
-    <Form.Control
-      as="textarea"
-      rows={10}
-      name="content"
-      value={page.content}
-      onChange={changeField}
-      required
-    />
+      <Form.Label>Content</Form.Label>
+      <Form.Control
+        as="textarea"
+        rows={10}
+        name="content"
+        value={page.content}
+        onChange={changeField}
+        required
+      />
     </>
-  )
-  if(isFroala){
-    contentField=(
+  );
+  if (isFroala) {
+    contentField = (
       <>
         <Form.Label>content on froala</Form.Label>
         <FroalaEditorComponent
-          tag='textarea'
+          tag="textarea"
           onModelChange={handleModelChange}
           model={page.content}
         /></>
-    )
+    );
   }
-
   return isLoading ?
     <div className="text-center mt-3">
       <Spinner className="mt-3" animation="border" variant="primary"/>
@@ -164,24 +159,19 @@ const AdminForm: React.FC<Props> = ({pages, reloadNav}) => {
         <Col/>
         <Col sm={10}>
           <div className="text-end mt-4">
-            <Button onClick={()=>setIsFroala(!isFroala)}>{isFroala?'use texreata':'use froala'}</Button>
+            <Button onClick={() => setIsFroala(!isFroala)}>{isFroala ? 'use texreata' : 'use froala'}</Button>
             <Button className="mx-3  btn-light btn-outline-primary" onClick={changeFormMode}>
               {!isEdit ? 'Edit mode' : 'Create mode'}
             </Button>
           </div>
-
-
           <Form onSubmit={onFormSubmit} className="mt-3">
-
             <Form.Text muted><h1>{isEdit ? 'Edit page' : 'Create page'}</h1></Form.Text>
-
             <Form.Group className="mt-3 mb-3"
                         controlId="title"
             >
               <Form.Label>Page</Form.Label>
               {pageField}
             </Form.Group>
-
             <Form.Group className="mb-3"
                         controlId="title"
             >
@@ -200,9 +190,7 @@ const AdminForm: React.FC<Props> = ({pages, reloadNav}) => {
             >
               {contentField}
             </Form.Group>
-
             <div className="d-flex justify-content-end">
-
               <Button variant="primary"
                       type="submit"
                       disabled={isSending}

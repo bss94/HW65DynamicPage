@@ -5,10 +5,10 @@ import {NavLink} from 'react-router-dom';
 
 interface Props {
   pages: Page[];
-  isFetching:boolean
+  isFetching: boolean;
 }
 
-const Toolbar: React.FC<Props> = ({pages,isFetching}) => {
+const Toolbar: React.FC<Props> = ({pages, isFetching}) => {
   return (
     <Navbar bg="primary" data-bs-theme="dark">
       <Container>
@@ -18,10 +18,10 @@ const Toolbar: React.FC<Props> = ({pages,isFetching}) => {
         <Nav className="ms-auto">
           {isFetching
             ?
-            <Spinner  animation="border" variant="light"/>
+            <Spinner animation="border" variant="light"/>
             :
             pages.map(el => {
-                return <NavLink className="nav-link" to={`/pages/${el.id}`} key={el.id}>{el.title}</NavLink>;
+              return <NavLink className="nav-link" to={`/pages/${el.id}`} key={el.id}>{el.title}</NavLink>;
             })
           }
 
