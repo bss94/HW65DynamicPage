@@ -44,7 +44,9 @@ const DynamicPage = () => {
       <div>{
         page ? <>
             <h1 className="p-2 mx-5 mt-3">{page.title}</h1>
-            <div className="p-3">{page.content}</div>
+            <div className="p-3" dangerouslySetInnerHTML={
+              {__html: page.content}
+            }/>
           </>
           :
           <>
