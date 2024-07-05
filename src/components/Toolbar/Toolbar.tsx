@@ -21,7 +21,9 @@ const Toolbar: React.FC<Props> = ({pages, isFetching}) => {
             <Spinner animation="border" variant="light"/>
             :
             pages.map(el => {
-              return <NavLink className="nav-link" to={`/pages/${el.id}`} key={el.id}>{el.title}</NavLink>;
+              return <NavLink className="nav-link text-capitalize"
+                              to={`/pages/${el.id}`}
+                              key={el.id}>{el.title}</NavLink>;
             })
           }
 

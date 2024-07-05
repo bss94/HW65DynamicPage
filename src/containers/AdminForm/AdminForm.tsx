@@ -68,17 +68,29 @@ const AdminForm: React.FC<Props> = ({pages, reloadNav}) => {
         await axiosApi.put(`/pages/${page.id}.json`, postData);
         enqueueSnackbar('Edited', {variant: 'success'});
       } else {
-        await axiosApi.post(`/pages.json`, postData);
-        enqueueSnackbar('Created', {variant: 'success'});
+        const pageName = page.id.toLowerCase();
+        const address = pageName.split(" ").filter((el) => el.length > 0).join('-');
+        const slug = pages.map((el) => {
+          return el.id === address;
+        });
+        if (!slug.includes(true)) {
+          await axiosApi.put(`/pages/${address}.json`, postData);
+          enqueueSnackbar('Created', {variant: 'success'});
+        } else {
+          enqueueSnackbar('Created page name not exclusive', {variant: 'error'});
+        }
       }
-
     } catch (e) {
       enqueueSnackbar('Something Wrong', {variant: 'error'});
     } finally {
       setIsSending(false);
     }
     void reloadNav();
-    navigate(`/pages/${page.id}`);
+    if (isEdit) {
+      navigate(`/pages/${page.id}`);
+    } else {
+      navigate(`/`);
+    }
   };
   let submitBtn = (<>Save</>);
   if (isSending) {
