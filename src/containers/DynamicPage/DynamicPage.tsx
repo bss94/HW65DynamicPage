@@ -44,7 +44,7 @@ const DynamicPage = () => {
       <div>{
         page ? <>
             <h1 className="p-2 mx-5 mt-3">{page.title}</h1>
-            <p className="p-3">{page.content}</p>
+            <div className="p-3">{page.content}</div>
           </>
           :
           <>

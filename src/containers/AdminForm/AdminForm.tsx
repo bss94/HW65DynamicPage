@@ -4,6 +4,10 @@ import {ApiPage, Page} from '../../types.ts';
 import {useNavigate} from 'react-router-dom';
 import axiosApi from '../../axiosApi.ts';
 import {enqueueSnackbar} from 'notistack';
+import 'froala-editor/css/froala_style.min.css';
+import 'froala-editor/css/froala_editor.pkgd.min.css';
+import FroalaEditorComponent from 'react-froala-wysiwyg';
+
 
 interface Props {
   pages: Page[];
@@ -20,6 +24,7 @@ const AdminForm: React.FC<Props> = ({pages, reloadNav}) => {
   const navigate = useNavigate();
   const [page, setPage] = useState<Page>(initialState);
   const [isEdit, setIsEdit] = useState(true);
+  const [isFroala, setIsFroala] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [isSending, setIsSending] = useState(false);
 
@@ -116,6 +121,38 @@ const AdminForm: React.FC<Props> = ({pages, reloadNav}) => {
       </Form.Select>
     );
   }
+  const handleModelChange= (event)=>{
+    console.log(event)
+    setPage((prev) => ({
+      ...prev,
+      content: event,
+    }));
+  }
+
+  let contentField = (
+    <>
+    <Form.Label>Content</Form.Label>
+    <Form.Control
+      as="textarea"
+      rows={10}
+      name="content"
+      value={page.content}
+      onChange={changeField}
+      required
+    />
+    </>
+  )
+  if(isFroala){
+    contentField=(
+      <>
+        <Form.Label>content on froala</Form.Label>
+        <FroalaEditorComponent
+          tag='textarea'
+          onModelChange={handleModelChange}
+          model={page.content}
+        /></>
+    )
+  }
 
   return isLoading ?
     <div className="text-center mt-3">
@@ -126,14 +163,16 @@ const AdminForm: React.FC<Props> = ({pages, reloadNav}) => {
       <>
         <Col/>
         <Col sm={10}>
-          <div className="text-center">
-            <Button className=" mt-4 btn-light btn-outline-primary" onClick={changeFormMode}>
+          <div className="text-end mt-4">
+            <Button onClick={()=>setIsFroala(!isFroala)}>{isFroala?'use texreata':'use froala'}</Button>
+            <Button className="mx-3  btn-light btn-outline-primary" onClick={changeFormMode}>
               {!isEdit ? 'Edit mode' : 'Create mode'}
             </Button>
           </div>
 
 
           <Form onSubmit={onFormSubmit} className="mt-3">
+
             <Form.Text muted><h1>{isEdit ? 'Edit page' : 'Create page'}</h1></Form.Text>
 
             <Form.Group className="mt-3 mb-3"
@@ -157,19 +196,13 @@ const AdminForm: React.FC<Props> = ({pages, reloadNav}) => {
             </Form.Group>
             <Form.Group
               className="mb-3"
-              controlId="body"
+              controlId="content"
             >
-              <Form.Label>Content</Form.Label>
-              <Form.Control
-                as="textarea"
-                rows={5}
-                name="content"
-                value={page.content}
-                onChange={changeField}
-                required
-              />
+              {contentField}
             </Form.Group>
+
             <div className="d-flex justify-content-end">
+
               <Button variant="primary"
                       type="submit"
                       disabled={isSending}
